@@ -46,7 +46,10 @@ the generated questions in your actual course material.
 <!-- TODO: drop in screenshots -->
 | Upload | Generating | Results |
 | --- | --- | --- |
-| _screenshot_ | _screenshot_ | _screenshot_ |
+| <img width="1920" height="958" alt="image" src="https://github.com/user-attachments/assets/ad040fae-c437-4a36-b533-a186ff5694c6" />
+ | <img width="1920" height="958" alt="image" src="https://github.com/user-attachments/assets/27157c0a-e3dd-4e37-b478-aa26fb2ba083" />
+ | <img width="1920" height="1658" alt="image" src="https://github.com/user-attachments/assets/92f5f150-e10f-481a-a83b-b82635883461" />
+ |
 
 ## Getting started
 
