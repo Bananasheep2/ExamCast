@@ -68,6 +68,7 @@ Copy the template and fill in your key:
 
 ```bash
 cp .env.example .env
+open -e .env
 # open .env file and set GEMINI_API_KEY to your API key
 ```
 
