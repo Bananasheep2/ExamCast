@@ -206,7 +206,7 @@ div[data-testid="stFileUploader"]{margin-bottom:22px}
 .loader .ring2{inset:12px;border-width:3px;border-top-color:#26231d;animation-duration:1.7s;animation-direction:reverse}
 @keyframes sp{to{transform:rotate(360deg)}}
 .gh{font-size:24px;font-weight:700;letter-spacing:-.02em;margin:0 0 8px;color:#26231d}
-.quote{font-size:17px;color:#8a8272;margin:0 auto 26px;max-width:36ch;min-height:1.4em}
+.quote{font-size:17px;color:#8a8272;margin:0 auto 26px;max-width:36ch;min-height:1.4em;text-align:center}
 .track{height:8px;border-radius:8px;background:#eee4d6;overflow:hidden;margin:0 0 8px}
 .track>i{display:block;height:100%;background:linear-gradient(90deg,#d1622b,#e07d43);border-radius:8px;transition:width .5s linear}
 .pctrow{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#9b9382;margin-bottom:26px}

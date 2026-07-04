@@ -1,0 +1,8 @@
+[theme]
+# Pin a light theme so nothing follows the OS/browser dark-mode preference.
+# Without this, Streamlit auto-selects light/dark from prefers-color-scheme,
+# which flips unpinned text to white on this app's hard-coded light surfaces.
+base = "light"
+backgroundColor = "#f3efe6"
+secondaryBackgroundColor = "#fffdf7"
+textColor = "#26231d"
