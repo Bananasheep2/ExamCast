@@ -1,0 +1,22 @@
+# Python virtual environments
+venv/
+.venv/
+
+# Secrets / local config
+.env
+.claude/
+
+# Python caches / build artifacts
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Local data stores
+chroma_db/
+
+# Uploaded / fixture documents (may be copyrighted; keep out of the repo)
+*.pdf
+*.pptx
+
+# OS cruft
+.DS_Store

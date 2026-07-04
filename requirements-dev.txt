@@ -1,0 +1,7 @@
+# Test-only dependencies — not needed to run the app itself.
+# Install with: pip install -r requirements.txt -r requirements-dev.txt
+-r requirements.txt
+pypdf==6.14.2
+pypdfium2==5.11.0
+fonttools==4.63.0
+playwright==1.61.0
