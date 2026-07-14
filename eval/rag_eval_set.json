@@ -1,0 +1,188 @@
+{
+  "collection": "slides_st2131",
+  "subject": "st2131",
+  "k": 5,
+  "description": "Ground-truth retrieval eval for the ExamCast RAG pipeline. Each item is an exam-style query; gold_chunks are the slide-chunk IDs in the slides_st2131 Chroma collection that genuinely cover the queried material. Gold labels were anchored to chunk contents by section headers and verbatim worked examples (e.g. Example 4.13 hypergeometric balls, Example 5.8 Y=1/X^2, Example 1.11 stars-and-bars).",
+  "questions": [
+    {
+      "id": "counting-basic",
+      "query": "How do you use the basic principle of counting to find the number of ways a multi-stage procedure can be carried out?",
+      "gold_chunks": ["0_slides_1"],
+      "topic": "combinatorics"
+    },
+    {
+      "id": "stars-bars",
+      "query": "If four whole numbers that can be zero add up to at most twenty, how many different combinations are possible?",
+      "gold_chunks": ["0_slides_5"],
+      "topic": "combinatorics"
+    },
+    {
+      "id": "groups-division",
+      "query": "How do you count the number of ways to split a set of people into several equal-sized teams?",
+      "gold_chunks": ["0_slides_3"],
+      "topic": "combinatorics"
+    },
+    {
+      "id": "stirling-first-kind",
+      "query": "Express the number of ways to arrange r distinct objects into n cycles using Stirling numbers of the first kind s(r, n).",
+      "gold_chunks": ["0_slides_4"],
+      "topic": "combinatorics"
+    },
+    {
+      "id": "couples-round-table",
+      "query": "How many ways can n couples be seated around a round table so that no husband sits next to his own wife?",
+      "gold_chunks": ["0_slides_7"],
+      "topic": "combinatorics"
+    },
+    {
+      "id": "combinatorics-overview",
+      "query": "Summarize the combinatorial counting techniques introduced in the chapter, including the basic principle of counting and dividing objects into groups.",
+      "gold_chunks": ["0_slides_1", "0_slides_3"],
+      "topic": "combinatorics"
+    },
+    {
+      "id": "inclusion-exclusion",
+      "query": "If two events are each very likely, how can you put a lower bound on the probability that both happen together?",
+      "gold_chunks": ["0_slides_6"],
+      "topic": "probability-axioms"
+    },
+    {
+      "id": "conditional-prob-def",
+      "query": "State the definition of the conditional probability of an event A given an event B.",
+      "gold_chunks": ["0_slides_8"],
+      "topic": "conditional-probability"
+    },
+    {
+      "id": "bayes-theorem",
+      "query": "Use Bayes' theorem to express P(A given B) in terms of P(B given A), P(A) and P(B).",
+      "gold_chunks": ["0_slides_9"],
+      "topic": "conditional-probability"
+    },
+    {
+      "id": "conditional-independence-overview",
+      "query": "Explain conditional probability and independence of events, including how independence simplifies conditional probabilities.",
+      "gold_chunks": ["0_slides_8", "0_slides_9"],
+      "topic": "conditional-probability"
+    },
+    {
+      "id": "discrete-rv-def",
+      "query": "When is a random variable said to be discrete?",
+      "gold_chunks": ["0_slides_10"],
+      "topic": "discrete-rv"
+    },
+    {
+      "id": "variance-properties",
+      "query": "State the properties of variance, such as Var(aX) = a^2 Var(X) and Var(aX + b).",
+      "gold_chunks": ["0_slides_11"],
+      "topic": "discrete-rv"
+    },
+    {
+      "id": "sum-of-binomials",
+      "query": "Show that the sum of two independent binomial random variables with the same success probability is again binomial.",
+      "gold_chunks": ["0_slides_12"],
+      "topic": "discrete-rv"
+    },
+    {
+      "id": "memoryless-geometric",
+      "query": "Prove the memoryless property of the geometric distribution: P(X > m + n | X > m) = P(X > n).",
+      "gold_chunks": ["0_slides_13"],
+      "topic": "discrete-rv"
+    },
+    {
+      "id": "skellam-poisson-diff",
+      "query": "Does the difference of two independent Poisson random variables follow a Poisson distribution?",
+      "gold_chunks": ["0_slides_15"],
+      "topic": "discrete-rv"
+    },
+    {
+      "id": "hypergeometric-balls",
+      "query": "Drawing a handful of balls without replacement from an urn containing two colours, how do you find the chance of getting a given number of one colour?",
+      "gold_chunks": ["0_slides_16"],
+      "topic": "discrete-rv"
+    },
+    {
+      "id": "pdf-epsilon-interpretation",
+      "query": "Explain why P(x <= X <= x + epsilon) is approximately epsilon times f(x) for a continuous random variable.",
+      "gold_chunks": ["0_slides_17"],
+      "topic": "continuous-rv"
+    },
+    {
+      "id": "exponential-memoryless",
+      "query": "Prove the memoryless property of the exponential distribution using the survival function G(x) = 1 - F(x).",
+      "gold_chunks": ["0_slides_20"],
+      "topic": "continuous-rv"
+    },
+    {
+      "id": "memoryless-overview",
+      "query": "Which distributions satisfy the memoryless property and how is it proven for each?",
+      "gold_chunks": ["0_slides_13", "0_slides_20"],
+      "topic": "cross-topic"
+    },
+    {
+      "id": "transform-one-over-x-squared",
+      "query": "If a variable is exponentially distributed, how do I derive the density of its reciprocal squared?",
+      "gold_chunks": ["0_slides_21"],
+      "topic": "continuous-rv"
+    },
+    {
+      "id": "gamma-poisson-process",
+      "query": "Describe the gamma distribution that arises as the waiting time until the nth event in a Poisson process.",
+      "gold_chunks": ["0_slides_22"],
+      "topic": "continuous-rv"
+    },
+    {
+      "id": "order-statistic-median",
+      "query": "How do you work out the distribution of the middle value among three independent random observations?",
+      "gold_chunks": ["0_slides_23"],
+      "topic": "continuous-rv"
+    },
+    {
+      "id": "joint-density-def",
+      "query": "Define what it means for X and Y to be jointly continuous random variables with a joint density function.",
+      "gold_chunks": ["0_slides_24"],
+      "topic": "joint-distributions"
+    },
+    {
+      "id": "geometric-probability-points",
+      "query": "Two points are dropped uniformly at random on overlapping intervals; what is the probability that one exceeds the other?",
+      "gold_chunks": ["0_slides_26"],
+      "topic": "joint-distributions"
+    },
+    {
+      "id": "jacobian-joint-transform",
+      "query": "Given U = g(X, Y) and V = h(X, Y), how do you find the joint pdf of U and V using the Jacobian of the transformation?",
+      "gold_chunks": ["0_slides_27"],
+      "topic": "joint-distributions"
+    },
+    {
+      "id": "transformations-overview",
+      "query": "Describe the general method for finding the distribution of a transformed random variable, for both single and joint transformations.",
+      "gold_chunks": ["0_slides_21", "0_slides_27"],
+      "topic": "cross-topic"
+    },
+    {
+      "id": "conditional-expectation-def",
+      "query": "Define the conditional expectation E(X | Y = y) for jointly distributed discrete random variables.",
+      "gold_chunks": ["0_slides_31"],
+      "topic": "expectation"
+    },
+    {
+      "id": "mgf-geometric-third-moment",
+      "query": "Use the moment generating function of a geometric random variable to find E[X^3].",
+      "gold_chunks": ["0_slides_32"],
+      "topic": "expectation"
+    },
+    {
+      "id": "clt-statement",
+      "query": "State the Central Limit Theorem for the standardized sum of n iid random variables as n tends to infinity.",
+      "gold_chunks": ["0_slides_34"],
+      "topic": "clt"
+    },
+    {
+      "id": "expectation-covariance-overview",
+      "query": "State the key properties of the expectation of sums of random variables and of covariance for independent variables.",
+      "gold_chunks": ["0_slides_28", "0_slides_29"],
+      "topic": "expectation"
+    }
+  ]
+}

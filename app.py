@@ -50,12 +50,21 @@ def build_paper_paths(papers: list, tmpdir: str) -> dict:
     """
     paper_paths = {}
     for i, pf in enumerate(papers):
-        path = os.path.join(tmpdir, _safe_upload_name(pf.name))
+        safe_name = _safe_upload_name(pf.name)
+        path = os.path.join(tmpdir, safe_name)
         with open(path, "wb") as f:
             f.write(pf.getvalue())
         year_match = re.search(r"(20\d\d)", pf.name)
         year = year_match.group(1) if year_match else str(2020 + i)
-        paper_paths[year] = path
+        # Key by year, but never let a second file with the same detected year
+        # silently overwrite the first — disambiguate collisions so every
+        # uploaded paper gets its own entry (and still ingests under its year).
+        key = year
+        suffix = 2
+        while key in paper_paths:
+            key = f"{year}#{suffix}"
+            suffix += 1
+        paper_paths[key] = path
     return paper_paths
 
 

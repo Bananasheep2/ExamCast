@@ -1,3 +1,5 @@
+import threading
+
 from langgraph.graph import StateGraph, END
 from typing import TypedDict, Optional
 
@@ -31,6 +33,44 @@ class PipelineState(TypedDict):
 # ── Pipeline nodes ─────────────────────────────────────────
 
 
+def _ingest_papers_concurrently(paper_paths: dict, subject: str) -> int:
+    """Ingest every paper of one run in parallel and return the total chunk
+    count. Running them concurrently makes them a single ingest batch (see
+    pipeline.ingest), so the run clears stale data once and keeps every paper.
+    Any worker error is re-raised so node_ingest reports it as a pipeline error.
+    """
+    items = list(paper_paths.items())
+    if not items:
+        return 0
+
+    results: dict[str, int] = {}
+    errors: list[Exception] = []
+    lock = threading.Lock()
+
+    def worker(key: str, path: str):
+        # build_paper_paths disambiguates same-year uploads as "2022#2"; the
+        # real year is the part before "#", and the full key namespaces the
+        # paper's chunk ids so two same-year papers don't collide.
+        year = key.split("#", 1)[0]
+        try:
+            n = ingest_past_paper(path, subject, year, paper_id=key)
+            with lock:
+                results[key] = n
+        except Exception as e:  # noqa: BLE001 — surfaced below via node_ingest
+            with lock:
+                errors.append(e)
+
+    threads = [threading.Thread(target=worker, args=(k, p)) for k, p in items]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+
+    if errors:
+        raise errors[0]
+    return sum(results.values())
+
+
 def node_ingest(state: PipelineState) -> PipelineState:
     """Ingest slides (if available) and past papers into ChromaDB."""
     try:
@@ -38,9 +78,12 @@ def node_ingest(state: PipelineState) -> PipelineState:
         if state["has_slides"] and state["slides_paths"]:
             n_slides = ingest_slides(state["slides_paths"], state["subject"])
 
-        n_papers = 0
-        for year, path in state["paper_paths"].items():
-            n_papers += ingest_past_paper(path, state["subject"], year)
+        # Ingest all of this run's papers concurrently so they register as a
+        # single ingest batch: the batch clears the prior run's data once and
+        # then accumulates every paper, instead of a sequential loop in which
+        # each call would look like a new run and wipe the one before it.
+        n_papers = _ingest_papers_concurrently(
+            state["paper_paths"], state["subject"])
 
         return {**state, "slides_chunks": n_slides, "paper_chunks": n_papers}
     except Exception as e:

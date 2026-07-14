@@ -3,10 +3,10 @@ python-pptx==0.6.23
 sentence-transformers==3.0.1
 chromadb==0.5.5
 google-generativeai==0.7.2
-langgraph==0.2.0
+langgraph==1.2.9
 pydantic==2.8.0
 streamlit==1.54.0
-python-dotenv==1.0.0
+python-dotenv==1.2.2
 fpdf2==2.7.9
 
 # Security-pinned transitive deps (parse untrusted uploaded files).
@@ -14,3 +14,25 @@ fpdf2==2.7.9
 # pdfplumber is bumped. pillow must stay >=12.2.0 (CVE fixes) and <13 (streamlit).
 pdfminer.six==20260107
 pillow==12.3.0
+
+# Security-pinned transitive deps of the langgraph stack — bumped to clear
+# pip-audit (langchain-core PYSEC-2026-373/1518/2193/2562/2563/2564,
+# langgraph PYSEC-2026-83/2194, langgraph-checkpoint PYSEC-2026-1527/2573/2574,
+# langsmith PYSEC-2026-2582/2583 + GHSA-f4xh-w4cj-qxq8). Only StateGraph/END
+# are used, so the langgraph 0.2->1.x major bump is API-safe here.
+langchain-core==1.4.9
+langgraph-checkpoint==4.1.1
+langsmith==0.10.2
+
+# protobuf: bumped to 5.29.6 to clear PYSEC-2026-1805. pip's resolver warns
+# that opentelemetry-proto 1.27.0 and google-ai-generativelanguage 0.6.6 pin
+# protobuf<5, but both import and run correctly on 5.29.6 (verified: chromadb
+# query + genai import). Revisit if chromadb/google-generativeai are upgraded.
+protobuf==5.29.6
+
+# transformers CANNOT currently clear pip-audit: PYSEC-2025-217 and
+# PYSEC-2026-2290 have no fixed release, and the fixes for PYSEC-2026-2288/2289
+# land in transformers 5.x, which sentence-transformers==3.0.1 forbids
+# (requires transformers<5.0.0). Held at the latest 4.x until sentence-
+# transformers is bumped (which would change embedding behaviour).
+transformers==4.57.6

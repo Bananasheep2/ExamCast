@@ -20,3 +20,7 @@ chroma_db/
 
 # OS cruft
 .DS_Store
+
+# Coverage + eval artifacts
+.coverage
+eval/artifacts/

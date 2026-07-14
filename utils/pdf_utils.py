@@ -36,21 +36,96 @@ def extract_text_from_pptx(pptx_path: str) -> list[dict]:
             slides.append({"page": i + 1, "text": "\n".join(texts)})
     return slides
 
-def chunk_slides(pages: list[dict], chunk_size: int = 3) -> list[dict]:
+def chunk_slides(pages: list[dict], chunk_size: int = 3,
+                 overlap: int = 0) -> list[dict]:
+    """Group consecutive slide pages into chunks.
+
+    ``chunk_size`` pages per chunk; ``overlap`` pages are shared with the
+    previous chunk (a sliding page window). ``overlap=0`` (the default) is the
+    original non-overlapping behaviour and yields identical chunk ids
+    (``slides_0``, ``slides_1``, …) to callers that don't set it.
+    """
+    if chunk_size < 1:
+        raise ValueError(f"chunk_size must be >= 1, got {chunk_size}")
+    if not 0 <= overlap < chunk_size:
+        raise ValueError(
+            f"overlap must satisfy 0 <= overlap < chunk_size, "
+            f"got overlap={overlap}, chunk_size={chunk_size}"
+        )
+    step = chunk_size - overlap
     chunks = []
-    for i in range(0, len(pages), chunk_size):
+    cid = 0
+    for i in range(0, len(pages), step):
         group = pages[i:i + chunk_size]
+        if not group:
+            break
         combined_text = "\n\n".join(p["text"] for p in group)
         page_nums = [p["page"] for p in group]
         chunks.append({
-            "chunk_id": f"slides_{i // chunk_size}",
+            "chunk_id": f"slides_{cid}",
             "text": combined_text,
             "pages": page_nums,
             "source": "slides"
         })
+        cid += 1
+        # With overlap, the window can reach the end before the range does;
+        # stop so we don't emit a trailing chunk fully contained in the last.
+        if i + chunk_size >= len(pages):
+            break
     return chunks
 
-def chunk_past_paper(pages: list[dict], paper_year: str) -> list[dict]:
+
+def chunk_slides_by_tokens(pages: list[dict], tokenizer, max_tokens: int = 512,
+                           overlap: int = 64) -> list[dict]:
+    """Token-window chunker: concatenate page text and split every
+    ``max_tokens`` tokens with ``overlap`` tokens shared between neighbours.
+
+    ``tokenizer`` is a HuggingFace-style tokenizer (e.g. the embedding model's
+    ``.tokenizer``) so token boundaries match how the text will be embedded.
+    Each chunk records the source ``pages`` its tokens came from, so gold
+    labels anchored to page numbers can be re-mapped across configs.
+    """
+    if max_tokens < 1:
+        raise ValueError(f"max_tokens must be >= 1, got {max_tokens}")
+    if not 0 <= overlap < max_tokens:
+        raise ValueError(
+            f"overlap must satisfy 0 <= overlap < max_tokens, "
+            f"got overlap={overlap}, max_tokens={max_tokens}"
+        )
+    flat_ids: list[int] = []
+    token_page: list[int] = []  # source page number for each token position
+    for p in pages:
+        ids = tokenizer.encode(p["text"], add_special_tokens=False)
+        flat_ids.extend(ids)
+        token_page.extend([p["page"]] * len(ids))
+
+    step = max_tokens - overlap
+    chunks = []
+    cid = 0
+    n = len(flat_ids)
+    for start in range(0, n, step):
+        end = min(start + max_tokens, n)
+        span = flat_ids[start:end]
+        if not span:
+            break
+        chunks.append({
+            "chunk_id": f"slides_{cid}",
+            "text": tokenizer.decode(span),
+            "pages": sorted(set(token_page[start:end])),
+            "source": "slides"
+        })
+        cid += 1
+        if end >= n:
+            break
+    return chunks
+
+def chunk_past_paper(pages: list[dict], paper_year: str,
+                     paper_id: str | None = None) -> list[dict]:
+    # ``paper_id`` namespaces the chunk ids so two papers sharing a detected
+    # year (e.g. sem1 + sem2 of 2022) don't collide on ``paper_2022_q1``. It
+    # defaults to the year, keeping the id format unchanged for the common
+    # one-paper-per-year case. The stored ``year`` is always the real year.
+    id_ns = paper_id if paper_id is not None else paper_year
     full_text = "\n".join(p["text"] for p in pages)
     question_pattern = re.compile(
         r'(?=^(?:Q\s*\d+|Question\s+\d+|\d+[\.\)]\s))',
@@ -61,7 +136,7 @@ def chunk_past_paper(pages: list[dict], paper_year: str) -> list[dict]:
     chunks = []
     for i, part in enumerate(parts):
         chunks.append({
-            "chunk_id": f"paper_{paper_year}_q{i+1}",
+            "chunk_id": f"paper_{id_ns}_q{i+1}",
             "text": part,
             "year": paper_year,
             "question_num": i + 1,
