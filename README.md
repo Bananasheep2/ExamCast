@@ -97,6 +97,28 @@ playwright install
 pytest tests/test_e2e_playwright.py -m e2e
 ```
 
+## Testing & Quality
+
+- **Test suite** — the full unit/integration suite passes with **0 failures**
+  (`pytest`; the slow Playwright e2e tests are excluded by default and run
+  separately, see above).
+- **Dependency security** — audited with
+  [`pip-audit`](https://pypi.org/project/pip-audit/). **6 of the 7** flagged
+  runtime dependencies are fully cleared (`langchain-core`, `langgraph`,
+  `langgraph-checkpoint`, `langsmith`, `protobuf`, `python-dotenv`; `pip`
+  itself was upgraded too). The 7th, **`transformers`, is intentionally held
+  back**: it's a transitive dependency of `sentence-transformers==3.0.1`, which
+  pins `transformers<5.0.0`, but the available CVE fixes only land in
+  `transformers` 5.x — and two of its advisories have no fixed release at all.
+  Upgrading would mean bumping `sentence-transformers`, changing the embedding
+  model's behaviour, so it stays on the latest 4.x until that's warranted.
+- **Retrieval evaluation** — [`eval/`](eval/) holds a ground-truth harness for
+  the RAG retrieval step (embed a query, search the `slides_<subject>` ChromaDB
+  collection). It scores a set of hand-labelled ground-truth queries with
+  **hit-rate@k** and **recall@k**, buckets failures by mode, and includes a
+  **chunk-granularity sweep** that re-ingests the corpus at several chunk
+  sizes/overlaps to compare retrieval quality. See [`eval/README.md`](eval/README.md).
+
 ## Usage
 
 1. Enter the **subject** name.
@@ -110,13 +132,8 @@ pytest tests/test_e2e_playwright.py -m e2e
 
 ## Deployment
 
-Not deployed anywhere yet — it currently runs locally (see
-[Getting started](#getting-started)). It's a standard Streamlit app, so the
-simplest hosted path is **[Streamlit Community Cloud](https://streamlit.io/cloud)**
-(free): point it at this repo with `app.py` as the main file, and add your
-`GEMINI_API_KEY` under the app's **Secrets** — dependencies install from
-`requirements.txt` automatically. Any container or VM host works too: just run
-`streamlit run app.py` with `GEMINI_API_KEY` set in the environment.
+This project runs locally — see [Getting started](#getting-started) below. Not
+currently deployed.
 
 `scripts/pre_deploy_check.sh` runs the unit + e2e suites as a pre-deploy gate.
 
